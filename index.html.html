@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Velora Stays</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:16px Arial;background:#f5f3ff;color:#29234e}
+header{background:#35256f;color:white;padding:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.logo{font-size:24px;color:#ffd27d;font-weight:bold}
+nav{display:flex;gap:6px;flex-wrap:wrap}button{padding:10px;border:0;border-radius:7px;cursor:pointer;font-weight:bold}
+nav button{background:white;color:#35256f}.primary{background:#7048e8;color:white}
+.danger{background:#ffe1e1;color:#a21d35}.secondary{background:#e9e3ff;color:#5136b5}
+.hero{background:linear-gradient(120deg,#332166,#9874ed);color:white;padding:45px 6%}
+.hero h1{font-size:40px}.search,.panel,.card{background:white;padding:20px;border-radius:13px;margin:15px 0;color:#29234e}
+.search{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+input,select,textarea{width:100%;padding:10px;margin:5px 0 12px;border:1px solid #d8d1ee;border-radius:7px}
+label{font-weight:bold;font-size:13px}.container{width:90%;max-width:1150px;margin:auto}
+section{padding:25px 0}h2{color:#48328f}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{padding:0;overflow:hidden;box-shadow:0 5px 18px #25135c15}.card img{width:100%;height:180px;object-fit:cover}
+.body{padding:16px}.price{font-size:22px;color:#7048e8;font-weight:bold}
+.tag{display:inline-block;background:#eee8ff;color:#5639b6;padding:5px;border-radius:15px;margin:3px;font-size:12px}
+.muted{color:#77758b;line-height:1.6}.hidden{display:none!important}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.item{background:white;padding:15px;border:1px solid #ddd7ee;border-radius:10px;margin:12px 0}
+table{width:100%;border-collapse:collapse;min-width:580px}td,th{padding:10px;border-bottom:1px solid #ddd;text-align:left}
+th{background:#eee8ff}.scroll{overflow:auto}footer{background:#29204e;color:white;padding:25px;text-align:center;margin-top:25px}
+@media(max-width:750px){.grid{grid-template-columns:repeat(2,1fr)}.search{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.grid,.search,.two{grid-template-columns:1fr}.hero h1{font-size:30px}.container{width:94%}}
+</style>
+</head>
+<body>
+<header><div class="logo">✦ VELORA STAYS</div><nav>
+<button onclick="page('home')">Home</button><button onclick="page('rooms')">Rooms</button>
+<button onclick="info('About Us','about')">About</button><button onclick="info('Contact Us','contact')">Contact</button>
+<button onclick="info('Customer FAQs','faq')">FAQs</button><button onclick="info('Travel Guide','travel')">Travel Guide</button>
+<button onclick="info('Privacy Policy','privacy')">Privacy</button>
+<button onclick="login('user')">User Login</button><button class="primary" onclick="login('admin')">Admin</button>
+</nav></header>
+
+<div id="home"><div class="hero"><div class="container">
+<span class="tag">YOUR JOURNEY, OUR CARE</span><h1>Discover Your Perfect Stay</h1>
+<p>Explore beautiful rooms, compare prices and book your next memorable getaway.</p>
+<div class="search">
+<div><label>Destination</label><input id="dest" placeholder="Enter destination"></div>
+<div><label>Check-in</label><input id="cin" type="date"></div>
+<div><label>Check-out</label><input id="cout" type="date"></div>
+<div><label>Guests</label><select id="guests"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+<button class="primary" onclick="search()">Search Rooms</button>
+</div></div></div>
+<section class="container"><h2>Choose Your Room</h2><div id="featured" class="grid"></div></section>
+<section style="background:#eae5ff"><div class="container"><h2>Why Choose Velora?</h2><div class="grid">
+<div class="panel"><h3>🔎 Easy Search</h3>Search by dates and destination.</div>
+<div class="panel"><h3>🛏️ Room Choices</h3>Four comfortable room categories.</div>
+<div class="panel"><h3>📋 Easy Management</h3>Manage your reservations.</div>
+</div></div></section></div>
+
+<div id="rooms" class="container hidden"><section><h2>Our Rooms</h2><div id="allrooms" class="grid"></div></section></div>
+
+<div id="userpage" class="container hidden"><section>
+<div class="row"><h2>My Dashboard</h2><button class="danger" onclick="logout()">Logout</button></div>
+<div class="panel"><h3>My Profile</h3><form id="profile">
+<label>Name</label><input id="pn" required><label>Email</label><input id="pe" readonly>
+<label>Phone</label><input id="pp"><button class="primary">Save Profile</button></form></div>
+<div class="panel"><h3>Booking History</h3><div id="mine"></div></div>
+</section></div>
+
+<div id="adminpage" class="container hidden"><section>
+<div class="row"><h2>Administrator Dashboard</h2><button class="danger" onclick="logout()">Logout</button></div>
+<div class="grid"><div class="panel">Users<h2 id="uc">0</h2></div><div class="panel">Bookings<h2 id="bc">0</h2></div><div class="panel">Booking Value<h2 id="rev">₹0</h2></div></div>
+<div class="panel"><h3>Room Price and Quantity</h3><div id="roomedit"></div></div>
+<div class="panel"><h3>All Bookings</h3><div class="scroll"><table><thead><tr><th>Guest</th><th>Room</th><th>Dates</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody id="allbook"></tbody></table></div></div>
+<div class="panel"><h3>Registered Users</h3><div class="scroll"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th></tr></thead><tbody id="allusers"></tbody></table></div></div>
+<div class="panel"><h3>Edit Website Information</h3><form id="contents">
+<label>About Us</label><textarea id="about"></textarea><label>Contact</label><textarea id="contact"></textarea>
+<label>FAQs</label><textarea id="faq"></textarea><label>Travel Guide</label><textarea id="travel"></textarea>
+<label>Privacy Policy</label><textarea id="privacy"></textarea><button class="primary">Save Information</button>
+</form></div></section></div>
+
+<div id="infopage" class="container hidden"><section class="panel"><h2 id="it"></h2><div id="iv" style="white-space:pre-wrap;line-height:1.8"></div><button class="secondary" onclick="page('home')">Back Home</button></section></div>
+<footer><h2 style="color:#ffd27d">VELORA STAYS</h2><p>Your comfort, our priority.</p>© 2026 Velora Stays</footer>
+
+<script>
+const initial=[
+{id:1,name:"Standard Room",price:1800,qty:12,cap:2,img:"https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800",desc:"Comfortable room for couples.",amen:"Wi-Fi, Air Conditioning, Bathroom"},
+{id:2,name:"Deluxe Room",price:3000,qty:8,cap:3,img:"https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800",desc:"Extra space and modern comfort.",amen:"Wi-Fi, Breakfast, City View"},
+{id:3,name:"Premium Suite",price:5500,qty:5,cap:3,img:"https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800",desc:"Elegant suite with a spacious lounge.",amen:"Wi-Fi, Lounge, Premium Amenities"},
+{id:4,name:"Family Room",price:4200,qty:6,cap:4,img:"https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800",desc:"Spacious room for families.",amen:"Wi-Fi, Extra Beds, Family Space"}];
+function load(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+let rooms=load("vr",initial),users=load("vu",[]),books=load("vb",[]);
+let data=load("vc",{about:"Velora Stays offers comfortable accommodation for every traveller.",contact:"Email: support@velorastays.example\nPhone: +91 90000 00000\nChennai, Tamil Nadu.",faq:"Can I check availability? Yes, search by dates.\nCan I cancel? Yes, at least 3 days before arrival.\nPayments are not real in this demo.",travel:"Explore local attractions, restaurants and transport. Confirm current timings before travelling.",privacy:"This demo stores data in your browser. Do not enter sensitive information."});
+let me=null,role="",flt=null;
+function save(){localStorage.setItem("vr",JSON.stringify(rooms));localStorage.setItem("vu",JSON.stringify(users));localStorage.setItem("vb",JSON.stringify(books));localStorage.setItem("vc",JSON.stringify(data))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function money(n){return "₹"+Number(n).toLocaleString("en-IN")}
+function today(){let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function days(a,b){return (Date.parse(b+"T00:00:00")-Date.parse(a+"T00:00:00"))/86400000}
+function get(id){return rooms.find(r=>r.id===Number(id))}
+function free(r,a,b,ex=""){return !!a&&!!b&&days(a,b)>0&&r.qty-books.filter(x=>x.id!==ex&&x.roomId===r.id&&x.status==="Confirmed"&&a<x.cout&&x.cin<b).length>0}
+function card(r){return `<div class="card"><img src="${r.img}" alt="${esc(r.name)}"><div class="body"><span class="tag">Up to ${r.cap} guests</span><h3>${esc(r.name)}</h3><p class="muted">${esc(r.desc)}</p>${r.amen.split(",").map(x=>`<span class="tag">${esc(x)}</span>`).join("")}<p class="price">${money(r.price)} <small>/ night</small></p><button class="primary" onclick="book(${r.id})">Book Now</button></div></div>`}
+function render(){featured.innerHTML=rooms.map(card).join("");allrooms.innerHTML=rooms.filter(r=>!flt||r.cap>=flt.g).map(card).join("")}
+function page(p){["home","rooms","userpage","adminpage","infopage"].forEach(x=>document.getElementById(x).classList.add("hidden"));if(p==="userpage"){if(role!=="user")return login("user");renderUser()}if(p==="adminpage"){if(role!=="admin")return login("admin");renderAdmin()}document.getElementById(p).classList.remove("hidden");if(p==="rooms")render();scrollTo(0,0)}
+function search(){let d=dest.value,a=cin.value,b=cout.value,g=+guests.value;if(!d||a<today()||!a||!b||days(a,b)<=0)return alert("Enter destination and valid dates.");flt={d,a,b,g};page("rooms");allrooms.innerHTML=rooms.filter(r=>r.cap>=g&&free(r,a,b)).map(card).join()||"<p>No rooms available for those dates.</p>"}
+function login(r){role=r;let e=prompt(r==="admin"?"Admin email:":"Email:");if(e===null)return;let p=prompt(r==="admin"?"Admin password:":"Password:");if(p===null)return;e=e.trim().toLowerCase();if(r==="admin"){if(e==="admin@velora.demo"&&p==="Admin123!"){me={name:"Administrator",email:e};page("adminpage")}else alert("Invalid admin login.");return}
+let u=users.find(x=>x.email===e&&x.pass===p);if(u){me=u;page("userpage");return}if(users.some(x=>x.email===e))return alert("Incorrect password.");if(!confirm("Account not found. Register?"))return;let n=prompt("Full name:");if(!n||p.length<6)return alert("Enter a name and password of at least 6 characters.");me={name:n,email:e,pass:p,phone:prompt("Phone number:")||""};users.push(me);save();page("userpage")}
+function logout(){me=null;role="";page("home")}
+function book(id){if(role!=="user"||!me){alert("Please log in first.");login("user");if(!me||role!=="user")return}let r=get(id),d=prompt("Destination:",flt?.d||"Chennai");if(!d)return;let a=prompt("Check-in YYYY-MM-DD:",flt?.a||"");if(!a)return;let b=prompt("Check-out YYYY-MM-DD:",flt?.b||"");if(!b)return;let g=Number(prompt("Number of guests (max "+r.cap+")","2"));if(a<today()||days(a,b)<=0||g<1||g>r.cap)return alert("Invalid dates or guests.");if(!free(r,a,b))return alert("Room unavailable.");let total=days(a,b)*r.price;if(!confirm(r.name+"\n"+a+" to "+b+"\nTotal: "+money(total)+"\nConfirm booking?"))return;books.push({id:"VL"+Date.now(),email:me.email,guest:me.name,dest:d,roomId:r.id,cin:a,cout:b,guests:g,total,status:"Confirmed"});save();alert("Booking confirmed. No actual payment or email was processed.");page("userpage")}
+function can(b){return b.status==="Confirmed"&&days(today(),b.cin)>=3}
+function cancel(id,admin=false){let b=books.find(x=>x.id===id);if(!b||(!admin&&(b.email!==me?.email||!can(b))))return alert("Cancellation is allowed at least 3 days before arrival.");if(b.status!=="Confirmed")return alert("Already cancelled.");if(confirm("Cancel booking?")){b.status="Cancelled";save();admin?renderAdmin():renderUser()}}
+function modify(id,admin=false){let b=books.find(x=>x.id===id);if(!b||(!admin&&(b.email!==me?.email||!can(b))))return alert("Changes are allowed at least 3 days before arrival.");if(b.status!=="Confirmed")return alert("Booking cancelled.");let a=prompt("New check-in:",b.cin);if(!a)return;let c=prompt("New check-out:",b.cout);if(!c)return;if(a<today()||days(a,c)<=0||!free(get(b.roomId),a,c,b.id))return alert("Invalid dates or unavailable room.");b.cin=a;b.cout=c;b.total=days(a,c)*get(b.roomId).price;save();admin?renderAdmin():renderUser();alert("Booking updated.")}
+function renderUser(){pn.value=me.name;pe.value=me.email;pp.value=me.phone||"";mine.innerHTML=books.filter(b=>b.email===me.email).map(b=>`<div class="item"><h3>${esc(get(b.roomId)?.name)}</h3><p>ID: ${esc(b.id)}</p><p>${esc(b.dest)} | ${esc(b.cin)} to ${esc(b.cout)}</p><p>Total: ${money(b.total)} | ${esc(b.status)}</p>${can(b)?`<button class="secondary" onclick="modify('${b.id}')">Modify</button><button class="danger" onclick="cancel('${b.id}')">Cancel</button>`:""}${b.status==="Confirmed"?`<button class="secondary" onclick="review()">Review</button>`:""}</div>`).join("")||"No bookings yet."}
+profile.onsubmit=e=>{e.preventDefault();me.name=pn.value;me.phone=pp.value;let u=users.find(x=>x.email===me.email);Object.assign(u,me);books.filter(b=>b.email===me.email).forEach(b=>b.guest=me.name);save();renderUser();alert("Profile updated.")};
+function review(){let r=prompt("Rate from 1 to 5:");if(!/^[1-5]$/.test(r||""))return alert("Enter 1 to 5.");alert("Thank you for your review!")}
+function renderAdmin(){uc.textContent=users.length;bc.textContent=books.length;rev.textContent=money(books.filter(b=>b.status==="Confirmed").reduce((s,b)=>s+b.total,0));roomedit.innerHTML=rooms.map(r=>`<div class="item"><h3>${esc(r.name)}</h3><div class="two"><div>Price<input type="number" id="p${r.id}" value="${r.price}"></div><div>Quantity<input type="number" id="q${r.id}" value="${r.qty}"></div></div><button class="primary" onclick="saveRoom(${r.id})">Save Room</button></div>`).join("");allbook.innerHTML=books.map(b=>`<tr><td>${esc(b.guest)}<br>${esc(b.email)}</td><td>${esc(get(b.roomId)?.name)}</td><td>${esc(b.cin)}<br>${esc(b.cout)}</td><td>${money(b.total)}</td><td>${esc(b.status)}</td><td><button onclick="modify('${b.id}',true)">Edit</button><button class="danger" onclick="cancel('${b.id}',true)">Cancel</button></td></tr>`).join("");allusers.innerHTML=users.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${esc(u.phone)}</td></tr>`).join("");["about","contact","faq","travel","privacy"].forEach(k=>document.getElementById(k).value=data[k])}
+function saveRoom(id){let r=get(id),p=+document.getElementById("p"+id).value,q=+document.getElementById("q"+id).value;if(p<=0||!Number.isInteger(q)||q<1)return alert("Enter valid price and quantity.");r.price=p;r.qty=q;save();renderAdmin();render();alert("Room updated.")}
+function info(title,k){document.getElementById("it").textContent=title;document.getElementById("iv").textContent=data[k];page("infopage")}
+contents.onsubmit=e=>{e.preventDefault();["about","contact","faq","travel","privacy"].forEach(k=>data[k]=document.getElementById(k).value);save();alert("Website information saved.")};
+cin.min=today();cout.min=today();render();
+</script>
+</body>
+</html>
